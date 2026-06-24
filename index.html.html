@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#07090D">
+<title>Repositório de Eficiência — Caldeira / COPTs</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#07090D;--bg2:#0C1018;--bg3:#111820;--bg4:#16202C;
+  --b:#1C2838;--b2:#243448;--b3:#2E4060;
+  --t:#D8E4F0;--t2:#6A849E;--t3:#2E4055;
+  --g:#00C85A;--gd:rgba(0,200,90,.07);
+  --a:#E8A020;--ad:rgba(232,160,32,.08);
+  --r:#F04050;--rd:rgba(240,64,80,.07);
+  --bl:#1E7FD8;--bld:rgba(30,127,216,.07);--blb:#58A0E8;
+  --cy:#00B8CC;--pu:#9B59B6;
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  --m:"SF Mono","Fira Code",monospace;
+  --rad:6px;--radl:10px;
+}
+html,body{height:100%;background:var(--bg);color:var(--t);font-family:var(--f)}
+body{-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:48px;
+  background:var(--bg2);border-bottom:1px solid var(--b);
+}
+.logo-mark{font-size:11px;font-weight:800;color:var(--t);letter-spacing:.08em;display:flex;align-items:center;gap:6px}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 7px var(--g);animation:gp 2s ease-in-out infinite}
+@keyframes gp{0%,100%{box-shadow:0 0 4px var(--g)}50%{box-shadow:0 0 14px var(--g),0 0 22px rgba(0,200,90,.2)}}
+.topbar-info{font-size:10px;color:var(--t3);font-family:var(--m)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.count-badge{padding:3px 10px;background:rgba(30,127,216,.1);border:1px solid rgba(30,127,216,.25);border-radius:20px;font-size:10px;font-weight:700;color:var(--blb);font-family:var(--m)}
+
+/* ── NAV PILLS ── */
+.nav-pills{
+  display:flex;gap:0;border-bottom:1px solid var(--b);background:var(--bg2);
+  overflow-x:auto;scrollbar-width:none;padding:0 20px;
+}
+.nav-pills::-webkit-scrollbar{display:none}
+.npill{
+  flex-shrink:0;padding:10px 14px;font-size:11px;font-weight:500;color:var(--t3);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.npill:hover{color:var(--t2)}
+.npill.on{color:var(--t);border-bottom-color:var(--bl)}
+.npill i{font-size:13px}
+
+/* ── MAIN ── */
+.main{overflow:hidden;position:relative}
+.panel{display:none;padding:20px;min-height:calc(100vh - 96px)}
+.panel.on{display:block}
+.panel.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 96px)}
+.panel.scroll::-webkit-scrollbar{width:3px}
+.panel.scroll::-webkit-scrollbar-thumb{background:var(--b2)}
+
+/* ── SECTION HEADERS ── */
+.sec{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.sec i{font-size:12px}
+.sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--b);border-radius:var(--radl);padding:14px}
+.card-sm{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rad);padding:10px 12px}
+
+/* ── KPI CARDS ── */
+.kpi-card{
+  background:var(--bg2);border:1px solid var(--b);border-radius:var(--radl);
+  padding:14px 16px;position:relative;overflow:hidden;
+}
+.kpi-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+.kc-g::before{background:linear-gradient(90deg,transparent,var(--g),transparent)}
+.kc-a::before{background:linear-gradient(90deg,transparent,var(--a),transparent)}
+.kc-r::before{background:linear-gradient(90deg,transparent,var(--r),transparent)}
+.kc-b::before{background:linear-gradient(90deg,transparent,var(--bl),transparent)}
+.kc-cy::before{background:linear-gradient(90deg,transparent,var(--cy),transparent)}
+.kpi-lbl{font-size:9px;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:700;line-height:1;font-family:var(--m)}
+.kpi-sub{font-size:10px;color:var(--t2);margin-top:5px}
+.kpi-ring{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column}
+
+/* GAUGE RING */
+.gauge-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
+.gauge-wrap svg{transform:rotate(-90deg)}
+.gr-bg{fill:none;stroke:var(--bg4);stroke-width:5}
+.gr-fill{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.gauge-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-pct{font-size:14px;font-weight:800;font-family:var(--m)}
+.gauge-lbl{font-size:7px;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-top:1px}
+
+/* ── FORM INPUTS ── */
+.form-section{margin-bottom:16px}
+.form-section-title{
+  font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;
+  padding:8px 0;border-bottom:1px solid var(--b);margin-bottom:10px;
+  display:flex;align-items:center;gap:5px;
+}
+.frow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
+@media(max-width:640px){.frow{grid-template-columns:1fr 1fr}.frow.r3{grid-template-columns:1fr 1fr 1fr}}
+.fgroup{display:flex;flex-direction:column;gap:3px}
+.fgroup label{font-size:9px;font-weight:600;color:var(--t3);letter-spacing:.04em;text-transform:uppercase}
+.finput{
+  height:36px;padding:0 10px;border-radius:var(--rad);
+  border:1px solid var(--b2);background:var(--bg3);
+  font-size:16px;color:var(--t);font-family:var(--m);
+  transition:border-color .2s;width:100%;
+}
+.finput:focus{outline:none;border-color:var(--blb)}
+.finput.ok{border-color:rgba(0,200,90,.5);background:rgba(0,200,90,.04);color:var(--g)}
+.finput.warn{border-color:rgba(232,160,32,.5);background:rgba(232,160,32,.04);color:var(--a)}
+.finput.crit{border-color:rgba(240,64,80,.5);background:rgba(240,64,80,.04);color:var(--r)}
+select.finput{-webkit-appearance:none;appearance:none;cursor:pointer}
+textarea.finput{height:60px;padding:8px 10px;resize:none;font-size:14px}
+.fref{font-size:9px;color:var(--t3);font-family:var(--m);margin-top:2px}
+
+/* ── BTNS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:10px 16px;border-radius:var(--rad);
+  border:1px solid var(--b2);background:var(--bg3);
+  font-size:12px;font-weight:600;color:var(--t2);
+  cursor:pointer;transition:all .15s;font-family:var(--f);
+  min-height:44px;
+}
+.btn:hover{color:var(--t);border-color:var(--b3);background:var(--bg4)}
+.btn:active{transform:scale(.98)}
+.btn.p{background:rgba(0,200,90,.08);border-color:rgba(0,200,90,.28);color:var(--g)}
+.btn.p:hover{background:rgba(0,200,90,.15)}
+.btn.bl{background:rgba(30,127,216,.08);border-color:rgba(30,127,216,.25);color:var(--blb)}
+.btn.r{background:rgba(240,64,80,.07);border-color:rgba(240,64,80,.25);color:var(--r)}
+.btn.full{width:100%;justify-content:center}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+/* ── BADGES ── */
+.bdg{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.bg{background:rgba(0,200,90,.08);color:var(--g);border:1px solid rgba(0,200,90,.22)}
+.ba{background:rgba(232,160,32,.08);color:var(--a);border:1px solid rgba(232,160,32,.22)}
+.br{background:rgba(240,64,80,.08);color:var(--r);border:1px solid rgba(240,64,80,.22)}
+.bb{background:rgba(30,127,216,.08);color:var(--blb);border:1px solid rgba(30,127,216,.22)}
+.bgr{background:rgba(255,255,255,.03);color:var(--t3);border:1px solid var(--b)}
+
+/* ── STAT TABLE ── */
+.stat-table{width:100%;border-collapse:collapse;font-size:11px}
+.stat-table th{
+  font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;
+  padding:7px 10px;border-bottom:1px solid var(--b);text-align:left;background:var(--bg3);
+}
+.stat-table td{padding:9px 10px;border-bottom:1px solid var(--b);color:var(--t)}
+.stat-table tr:last-child td{border-bottom:none}
+.stat-table tr:hover td{background:rgba(255,255,255,.02)}
+.stat-table td.val{font-family:var(--m);font-weight:700}
+.stat-table td.ok{color:var(--g)}.stat-table td.warn{color:var(--a)}.stat-table td.crit{color:var(--r)}
+.tend-up{color:var(--r)}.tend-down{color:var(--g)}.tend-stable{color:var(--a)}
+
+/* ── SVG CHARTS ── */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:640px){.chart-grid{grid-template-columns:1fr}}
+.chart-card{background:var(--bg2);border:1px solid var(--b);border-radius:var(--radl);padding:14px;overflow:hidden}
+.chart-title{font-size:10px;font-weight:700;color:var(--t2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:5px}
+.chart-svg{width:100%;overflow:visible}
+
+/* ── ANALYSIS CARD ── */
+.analysis-card{
+  background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  border:1px solid var(--b2);border-radius:var(--radl);
+  overflow:hidden;margin-bottom:14px;
+}
+.analysis-hdr{
+  padding:12px 16px;
+  background:linear-gradient(90deg,rgba(30,127,216,.08),rgba(0,200,90,.05));
+  border-bottom:1px solid var(--b);
+  display:flex;align-items:center;gap:10px;
+}
+.analysis-icon{width:32px;height:32px;border-radius:var(--rad);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.analysis-title{font-size:12px;font-weight:700;color:var(--t)}
+.analysis-sub{font-size:10px;color:var(--t2);margin-top:1px}
+.analysis-body{padding:14px 16px}
+.diag-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--b)}
+.diag-row:last-child{border-bottom:none}
+.diag-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.diag-sys{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.diag-text{font-size:11px;color:var(--t);line-height:1.5}
+.diag-action{font-size:10px;color:var(--blb);margin-top:3px}
+
+/* ── READINGS HISTORY ── */
+.reading-card{
+  background:var(--bg2);border:1px solid var(--b);border-radius:var(--rad);
+  padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:border-color .15s;
+}
+.reading-card:hover{border-color:var(--b2)}
+.reading-card.expanded{border-color:var(--b3)}
+.rc-hdr{display:flex;align-items:center;gap:10px}
+.rc-num{font-family:var(--m);font-size:10px;color:var(--blb);font-weight:700;flex-shrink:0;min-width:20px}
+.rc-title{font-size:12px;font-weight:500;color:var(--t);flex:1}
+.rc-time{font-size:10px;color:var(--t3);font-family:var(--m)}
+.rc-body{margin-top:10px;display:none;padding-top:10px;border-top:1px solid var(--b)}
+.reading-card.expanded .rc-body{display:block}
+.rc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:10px}
+@media(max-width:480px){.rc-grid{grid-template-columns:1fr 1fr}}
+.rc-param{background:var(--bg3);border-radius:4px;padding:5px 8px}
+.rc-param-lbl{color:var(--t3);font-size:9px;margin-bottom:2px}
+.rc-param-val{color:var(--t);font-family:var(--m);font-weight:600}
+
+/* ── MISC ── */
+.ab{padding:10px 14px;border-radius:var(--rad);border:1px solid;margin-bottom:8px}
+.ab.c{background:var(--rd);border-color:rgba(240,64,80,.25)}
+.ab.w{background:var(--ad);border-color:rgba(232,160,32,.25)}
+.ab.i{background:var(--bld);border-color:rgba(30,127,216,.25)}
+.ab.s{background:rgba(0,200,90,.06);border-color:rgba(0,200,90,.25)}
+.ab-t{font-size:11px;font-weight:700;margin-bottom:3px}
+.ab.c .ab-t{color:var(--r)}.ab.w .ab-t{color:var(--a)}.ab.i .ab-t{color:var(--blb)}.ab.s .ab-t{color:var(--g)}
+.ab-b{font-size:10px;color:var(--t2);line-height:1.6}
+.divider{height:1px;background:var(--b);margin:14px 0}
+.empty-state{text-align:center;padding:40px 20px;color:var(--t3)}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.3}
+.empty-text{font-size:12px;margin-top:6px;line-height:1.6}
+.toast{position:fixed;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--t);padding:9px 18px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--b2);opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;z-index:1000;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.toast.show{opacity:1}
+
+/* PARAM HIGHLIGHT BAR */
+.pbar-wrap{height:3px;background:var(--bg4);border-radius:2px;margin-top:6px;overflow:hidden}
+.pbar{height:100%;border-radius:2px;transition:width .7s ease}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-mark"><div class="logo-dot"></div>EFICIÊNCIA<span style="color:var(--t3);margin:0 4px">/</span><span style="color:var(--t2)">Caldeira &middot; COPTs</span></div>
+  <div class="topbar-info">FPSO BRAVO &middot; <span id="tb-date">--/--/----</span></div>
+  <div class="topbar-right">
+    <div class="count-badge" id="tb-count">0 leituras</div>
+  </div>
+</div>
+
+<div class="nav-pills">
+  <div class="npill on" id="np-dash" onclick="showPanel('dash',this)"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+  <div class="npill" id="np-input" onclick="showPanel('input',this)"><i class="ti ti-plus"></i>Nova Leitura</div>
+  <div class="npill" id="np-analysis" onclick="showPanel('analysis',this)"><i class="ti ti-brain"></i>An&aacute;lise</div>
+  <div class="npill" id="np-history" onclick="showPanel('history',this)"><i class="ti ti-history"></i>Hist&oacute;rico</div>
+</div>
+
+<div class="main">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="panel scroll on" id="panel-dash">
+
+  <!-- Efficiency gauges -->
+  <div class="g4" style="margin-bottom:14px" id="kpi-gauges">
+    <!-- rendered by JS -->
+  </div>
+
+  <!-- Param bars -->
+  <div class="sec-row">
+    <div class="sec"><i class="ti ti-chart-bar"></i>Par&acirc;metros cr&iacute;ticos &mdash; m&eacute;dia das leituras</div>
+    <span class="bdg bgr" id="dash-readings-count">--</span>
+  </div>
+  <div id="param-bars" style="margin-bottom:14px">
+    <div class="empty-state" style="padding:24px">
+      <div class="empty-icon"><i class="ti ti-database-off"></i></div>
+      <div class="empty-text">Nenhuma leitura registrada ainda.<br>Vá em <strong>Nova Leitura</strong> para inserir os dados.</div>
+    </div>
+  </div>
+
+  <!-- Chart grid -->
+  <div class="sec"><i class="ti ti-chart-line"></i>Tend&ecirc;ncia das leituras</div>
+  <div class="chart-grid" id="chart-grid">
+    <div class="chart-card"><div class="chart-title"><i class="ti ti-thermometer" style="font-size:12px"></i>Temperatura dos mancais (&deg;C)</div><svg class="chart-svg" id="ch-mancais" viewBox="0 0 320 120"></svg></div>
+    <div class="chart-card"><div class="chart-title"><i class="ti ti-droplet" style="font-size:12px"></i>&Oacute;leo lubrificante</div><svg class="chart-svg" id="ch-oleo" viewBox="0 0 320 120"></svg></div>
+    <div class="chart-card"><div class="chart-title"><i class="ti ti-flame" style="font-size:12px"></i>Sistema de vapor (bar)</div><svg class="chart-svg" id="ch-vapor" viewBox="0 0 320 120"></svg></div>
+    <div class="chart-card"><div class="chart-title"><i class="ti ti-arrow-down-circle" style="font-size:12px"></i>V&aacute;cuo &mdash; ejetor x condensador</div><svg class="chart-svg" id="ch-vacuo" viewBox="0 0 320 120"></svg></div>
+    <div class="chart-card"><div class="chart-title"><i class="ti ti-waves" style="font-size:12px"></i>&Aacute;gua do mar &mdash; entrada x sa&iacute;da (&deg;C)</div><svg class="chart-svg" id="ch-agua" viewBox="0 0 320 120"></svg></div>
+    <div class="chart-card"><div class="chart-title"><i class="ti ti-temperature" style="font-size:12px"></i>Condensado / Casco (&deg;C)</div><svg class="chart-svg" id="ch-condensado" viewBox="0 0 320 120"></svg></div>
+  </div>
+
+  <!-- Stat table -->
+  <div class="sec"><i class="ti ti-table"></i>Resumo estat&iacute;stico completo</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="stat-table" id="stat-table">
+      <thead><tr><th>Par&acirc;metro</th><th>M&eacute;dia</th><th>M&iacute;n.</th><th>M&aacute;x.</th><th>Varia&ccedil;&atilde;o</th><th>Tend&ecirc;ncia</th><th>Status</th></tr></thead>
+      <tbody id="stat-tbody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--t3)">Sem dados</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ NOVA LEITURA ═══ -->
+<div class="panel scroll" id="panel-input">
+
+  <div id="edit-alert" class="ab w" style="display:none"><div class="ab-t"><i class="ti ti-edit"></i> Modo edi&ccedil;&atilde;o ativo</div><div class="ab-b">Corrija os dados e clique em "Atualizar leitura".</div></div>
+
+  <!-- Identificação -->
+  <div class="form-section">
+    <div class="form-section-title"><i class="ti ti-id-badge"></i>Identifica&ccedil;&atilde;o da leitura</div>
+    <div class="frow">
+      <div class="fgroup">
+        <label>Tipo de opera&ccedil;&atilde;o</label>
+        <select class="finput" id="tipoOperacao">
+          <option>Offloading</option>
+          <option>Transfer&ecirc;ncia Interna</option>
+          <option>Rotina Normal / Stand-by</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label>Data</label>
+        <input type="date" class="finput" id="dataOperacao">
+      </div>
+      <div class="fgroup">
+        <label>No. COPT</label>
+        <input type="text" class="finput" id="copt" placeholder="Ex.: COPT 1">
+      </div>
+      <div class="fgroup">
+        <label>RPM</label>
+        <input type="number" inputmode="numeric" class="finput" id="rpm" placeholder="950">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fgroup">
+        <label>No. da leitura</label>
+        <select class="finput" id="numeroLeitura">
+          <option value="1">Leitura 1</option><option value="2">Leitura 2</option>
+          <option value="3">Leitura 3</option><option value="4">Leitura 4</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label>Hor&aacute;rio</label>
+        <input type="time" class="finput" id="horario">
+      </div>
+      <div class="fgroup">
+        <label>Operador</label>
+        <input type="text" class="finput" id="operador" placeholder="Nome">
+      </div>
+      <div class="fgroup">
+        <label>Condi&ccedil;&atilde;o geral</label>
+        <select class="finput" id="condicao">
+          <option>Normal</option><option>Em observa&ccedil;&atilde;o</option>
+          <option>Limitada</option><option>Anormalidade</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mancais e óleo -->
+  <div class="form-section">
+    <div class="form-section-title"><i class="ti ti-engine"></i>Mancais &amp; &Oacute;leo Lubrificante</div>
+    <div class="frow">
+      <div class="fgroup">
+        <label>1. Mancal sup. (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="mancalSuperior1" placeholder="—">
+        <div class="fref">Ref: &lt; 75&deg;C</div>
+      </div>
+      <div class="fgroup">
+        <label>2. Mancal m&eacute;d. (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="mancalMedio" placeholder="—">
+        <div class="fref">Ref: &lt; 75&deg;C</div>
+      </div>
+      <div class="fgroup">
+        <label>3. Mancal inf. (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="mancalInferior1" placeholder="—">
+        <div class="fref">Ref: &lt; 75&deg;C</div>
+      </div>
+      <div class="fgroup">
+        <label>4. Mancal sup. 2 (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="mancalSuperior2" placeholder="—">
+        <div class="fref">Ref: &lt; 75&deg;C</div>
+      </div>
+      <div class="fgroup">
+        <label>5. Mancal inf. 2 (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="mancalInferior2" placeholder="—">
+        <div class="fref">Ref: &lt; 75&deg;C</div>
+      </div>
+      <div class="fgroup">
+        <label>6. Press. &oacute;leo (bar)</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="pressaoOleo" placeholder="—">
+        <div class="fref">Ref: 1,0&ndash;2,0 bar</div>
+      </div>
+      <div class="fgroup">
+        <label>7. Temp. &oacute;leo entrada (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="tempOleoEntrada" placeholder="—">
+        <div class="fref">Ref: 40&ndash;55&deg;C</div>
+      </div>
+      <div class="fgroup">
+        <label>8. Temp. &oacute;leo sa&iacute;da (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="tempOleoSaida" placeholder="—">
+        <div class="fref">Ref: 45&ndash;60&deg;C</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vapor -->
+  <div class="form-section">
+    <div class="form-section-title"><i class="ti ti-flame"></i>Sistema de Vapor</div>
+    <div class="frow">
+      <div class="fgroup">
+        <label>9. Vapor entrada (bar)</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="vaporEntrada" placeholder="—">
+        <div class="fref">Ref: 13&ndash;16 bar</div>
+      </div>
+      <div class="fgroup">
+        <label>10. Vapor selagem (bar)</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="vaporSelagem" placeholder="—">
+        <div class="fref">Ref: 0,3&ndash;0,5 bar</div>
+      </div>
+      <div class="fgroup">
+        <label>11. Vapor exaust&atilde;o</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="vaporExaustao" placeholder="—">
+        <div class="fref">Ref: 0,2&ndash;0,5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ejetor -->
+  <div class="form-section">
+    <div class="form-section-title"><i class="ti ti-arrow-down-circle"></i>Ejetor</div>
+    <div class="frow">
+      <div class="fgroup">
+        <label>Press. vapor ejetor (bar)</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="ejetorPressaoVapor" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label>V&aacute;cuo ejetor</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="ejetorVacuo" placeholder="—">
+        <div class="fref">Ref: &lt; &minus;0,30</div>
+      </div>
+      <div class="fgroup">
+        <label>Temp. A.M. entrada (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="ejetorAmEntrada" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label>Temp. A.M. sa&iacute;da (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="ejetorAmSaida" placeholder="—">
+      </div>
+    </div>
+  </div>
+
+  <!-- Condensador -->
+  <div class="form-section">
+    <div class="form-section-title"><i class="ti ti-droplets"></i>Condensador de V&aacute;cuo</div>
+    <div class="frow">
+      <div class="fgroup">
+        <label>V&aacute;cuo condensador</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="condVacuo" placeholder="—">
+        <div class="fref">Ref: &lt; &minus;0,30</div>
+      </div>
+      <div class="fgroup">
+        <label>Press. A.M. entrada (bar)</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="condPressAmEntrada" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label>Press. A.M. overboard (bar)</label>
+        <input type="number" inputmode="decimal" step="0.01" class="finput" id="condPressAmOverboard" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label>Temp. A.M. entrada (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="condAmEntrada" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label>Temp. A.M. sa&iacute;da (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="condAmSaida" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label>Temp. casco (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="tempCasco" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label>Temp. condensado (&deg;C)</label>
+        <input type="number" inputmode="decimal" step="0.1" class="finput" id="tempCondensado" placeholder="—">
+        <div class="fref">Ref: &lt; 90&deg;C</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ocorrências -->
+  <div class="form-section">
+    <div class="form-section-title"><i class="ti ti-notes"></i>Ocorr&ecirc;ncias &amp; Pendências</div>
+    <div class="g3" style="gap:8px">
+      <div class="fgroup">
+        <label>Ocorr&ecirc;ncia</label>
+        <textarea class="finput" id="ocorrencia" placeholder="Descreva qualquer anomalia observada..."></textarea>
+      </div>
+      <div class="fgroup">
+        <label>A&ccedil;&atilde;o tomada</label>
+        <textarea class="finput" id="acao" placeholder="A&ccedil;&atilde;o executada..."></textarea>
+      </div>
+      <div class="fgroup">
+        <label>Pend&ecirc;ncia pr&oacute;ximo turno</label>
+        <textarea class="finput" id="pendencia" placeholder="O que precisa ser acompanhado..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn p" id="btn-salvar" onclick="salvarLeitura()"><i class="ti ti-device-floppy"></i>Salvar no banco local</button>
+    <button class="btn" id="btn-cancelar" onclick="cancelarEdicao()" style="display:none"><i class="ti ti-x"></i>Cancelar edi&ccedil;&atilde;o</button>
+    <button class="btn" onclick="limparForm()"><i class="ti ti-refresh"></i>Limpar</button>
+    <button class="btn bl" onclick="exportarJSON()"><i class="ti ti-download"></i>Exportar JSON</button>
+    <button class="btn r" onclick="apagarBanco()"><i class="ti ti-trash"></i>Apagar banco</button>
+  </div>
+</div>
+
+<!-- ═══ ANÁLISE ═══ -->
+<div class="panel scroll" id="panel-analysis">
+  <div id="analysis-content">
+    <div class="empty-state">
+      <div class="empty-icon"><i class="ti ti-brain"></i></div>
+      <div class="empty-text">Registre pelo menos 2 leituras para gerar a an&aacute;lise autom&aacute;tica.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HISTÓRICO ═══ -->
+<div class="panel scroll" id="panel-history">
+  <div class="sec-row">
+    <div class="sec"><i class="ti ti-history"></i>Banco local de leituras</div>
+    <button class="btn bl" onclick="exportarJSON()" style="padding:6px 12px;font-size:11px;min-height:36px"><i class="ti ti-download"></i>Exportar</button>
+  </div>
+  <div id="history-list">
+    <div class="empty-state">
+      <div class="empty-icon"><i class="ti ti-database-off"></i></div>
+      <div class="empty-text">Nenhuma leitura salva ainda.</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+<div class="toast" id="tst"></div>
+
+<script>
+// ── STORAGE KEY ──
+const SK = "banco_eficiencia_caldeira_copt_v3";
+let editingId = null;
+
+// ── PARAMETROS META ──
+const PARAMS = [
+  { key:"mancalMax", nome:"Temp. m&aacute;x. mancais", unidade:"&deg;C", tipo:"temp",
+    refs:{ok:[0,70], warn:[70,75], crit:[75,999]} },
+  { key:"pressaoOleo", nome:"Press. &oacute;leo lubr.", unidade:"bar", tipo:"press",
+    refs:{ok:[1.0,2.0], warn:[0.8,1.0], crit:[0,0.8]} },
+  { key:"tempOleoEntrada", nome:"Temp. &oacute;leo entrada", unidade:"&deg;C", tipo:"temp",
+    refs:{ok:[40,55], warn:[55,65], crit:[65,999]} },
+  { key:"tempOleoSaida", nome:"Temp. &oacute;leo sa&iacute;da", unidade:"&deg;C", tipo:"temp",
+    refs:{ok:[45,60], warn:[60,70], crit:[70,999]} },
+  { key:"vaporEntrada", nome:"Vapor entrada", unidade:"bar", tipo:"press",
+    refs:{ok:[13,16], warn:[12,13], crit:[0,12]} },
+  { key:"vaporSelagem", nome:"Vapor selagem", unidade:"bar", tipo:"press",
+    refs:{ok:[0.3,0.5], warn:[0.2,0.3], crit:[0,0.2]} },
+  { key:"vaporExaustao", nome:"Vapor exaust&atilde;o", unidade:"", tipo:"press",
+    refs:{ok:[0.2,0.5], warn:[0.1,0.2], crit:[0,0.1]} },
+  { key:"ejetorVacuo", nome:"V&aacute;cuo ejetor", unidade:"", tipo:"vacuo",
+    refs:{ok:[-999,-0.28], warn:[-0.28,-0.20], crit:[-0.20,0]} },
+  { key:"condVacuo", nome:"V&aacute;cuo condensador", unidade:"", tipo:"vacuo",
+    refs:{ok:[-999,-0.28], warn:[-0.28,-0.20], crit:[-0.20,0]} },
+  { key:"deltaTCond", nome:"&Delta;T &aacute;gua mar cond.", unidade:"&deg;C", tipo:"delta",
+    refs:{ok:[14,999], warn:[10,14], crit:[0,10]} },
+  { key:"tempCondensado", nome:"Temp. condensado", unidade:"&deg;C", tipo:"temp",
+    refs:{ok:[0,85], warn:[85,90], crit:[90,999]} }
+];
+
+// ── HELPERS ──
+function banco(){return JSON.parse(localStorage.getItem(SK)||"[]");}
+function salvarBanco(d){localStorage.setItem(SK,JSON.stringify(d));}
+function num(id){const v=document.getElementById(id).value;return v===""?null:Number(v);}
+function txt(id){return document.getElementById(id).value||"";}
+function avg(arr){const v=arr.filter(x=>x!==null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;}
+function minv(arr){const v=arr.filter(x=>x!==null&&!isNaN(x));return v.length?Math.min(...v):null;}
+function maxv(arr){const v=arr.filter(x=>x!==null&&!isNaN(x));return v.length?Math.max(...v):null;}
+function trend(vals){
+  const v=vals.filter(x=>x!==null&&!isNaN(x));
+  if(v.length<2)return{txt:"Est&aacute;vel",cls:"tend-stable"};
+  const d=v[v.length-1]-v[0];
+  if(Math.abs(d)<0.05)return{txt:"Est&aacute;vel",cls:"tend-stable"};
+  return d>0?{txt:"&uarr; Eleva&ccedil;&atilde;o",cls:"tend-up"}:{txt:"&darr; Redu&ccedil;&atilde;o",cls:"tend-down"};
+}
+function statusParam(p,med){
+  if(med===null)return{txt:"Sem dados",cls:"bgr"};
+  const r=p.refs;
+  if(p.tipo==="vacuo"){
+    if(med<=r.ok[0]||med<=r.ok[1])return med<=r.warn[0]?{txt:"Normal",cls:"bg"}:{txt:"Monitorar",cls:"ba"};
+    if(med>=r.crit[0]&&med<r.crit[1])return{txt:"Cr&iacute;tico",cls:"br"};
+    return{txt:"Normal",cls:"bg"};
+  }
+  if(med>=r.ok[0]&&med<=r.ok[1])return{txt:"Normal",cls:"bg"};
+  if(med>=r.warn[0]&&med<=r.warn[1])return{txt:"Monitorar",cls:"ba"};
+  return{txt:"Cr&iacute;tico",cls:"br"};
+}
+function effByStability(vals,limGood,limAttn){
+  const v=vals.filter(x=>x!==null&&!isNaN(x));
+  if(v.length<2)return null;
+  const variation=Math.abs(v[v.length-1]-v[0]);
+  if(variation<=limGood)return 95;
+  if(variation<=limAttn)return 80;
+  return 65;
+}
+function calcKPIs(data){
+  const vapor=avg([
+    effByStability(data.map(d=>d.vaporEntrada),0.3,1.0),
+    effByStability(data.map(d=>d.vaporSelagem),0.1,0.4),
+    effByStability(data.map(d=>d.vaporExaustao),0.1,0.4)
+  ].filter(v=>v!==null));
+  const vacuo=avg([
+    effByStability(data.map(d=>d.ejetorVacuo),0.03,0.08),
+    effByStability(data.map(d=>d.condVacuo),0.03,0.08)
+  ].filter(v=>v!==null));
+  const termico=avg([
+    effByStability(data.map(d=>d.mancalMax),3,8),
+    effByStability(data.map(d=>d.tempCondensado),3,8)
+  ].filter(v=>v!==null));
+  const geral=avg([vapor,vacuo,termico].filter(v=>v!==null));
+  return{vapor,vacuo,termico,geral};
+}
+function kpiColor(v){
+  if(v===null)return"var(--t3)";
+  if(v>=85)return"var(--g)";
+  if(v>=70)return"var(--a)";
+  return"var(--r)";
+}
+function kpiCls(v){
+  if(v===null)return"kc-b";
+  if(v>=85)return"kc-g";
+  if(v>=70)return"kc-a";
+  return"kc-r";
+}
+function kpiStatus(v){
+  if(v===null)return"Sem dados";
+  if(v>=85)return"Bom";
+  if(v>=70)return"Monitorar";
+  return"Cr&iacute;tico";
+}
+
+// ── GAUGE SVG ──
+function gaugeRingSVG(pct,col,label,sublabel){
+  const r=28,c=36,circ=2*Math.PI*r,offset=circ-(Math.max(0,Math.min(pct,100))/100)*circ;
+  return `<div class="kpi-card ${kpiCls(pct===null?null:pct)}" style="display:flex;align-items:center;gap:12px">
+    <div class="gauge-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle class="gr-bg" cx="${c}" cy="${c}" r="${r}"/>
+        <circle class="gr-fill" cx="${c}" cy="${c}" r="${r}" stroke="${pct===null?'var(--b3)':col}"
+          stroke-dasharray="${circ.toFixed(1)} ${circ.toFixed(1)}"
+          stroke-dashoffset="${pct===null?circ.toFixed(1):offset.toFixed(1)}"/>
+      </svg>
+      <div class="gauge-text">
+        <div class="gauge-pct" style="color:${pct===null?'var(--t3)':col}">${pct===null?"--":Math.round(pct)+"%"}</div>
+        <div class="gauge-lbl">${kpiStatus(pct)}</div>
+      </div>
+    </div>
+    <div>
+      <div class="kpi-lbl">${label}</div>
+      <div style="font-size:10px;color:var(--t2);margin-top:4px;line-height:1.4">${sublabel}</div>
+    </div>
+  </div>`;
+}
+
+// ── PARAM BARS ──
+function renderParamBars(data){
+  const el=document.getElementById("param-bars");
+  if(!data.length){
+    el.innerHTML=`<div class="empty-state" style="padding:24px"><div class="empty-icon"><i class="ti ti-database-off"></i></div><div class="empty-text">Registre leituras para ver os par&acirc;metros.</div></div>`;
+    return;
+  }
+  const groups=[
+    {title:"Mancais &amp; &Oacute;leo",icon:"ti-engine",
+     items:["mancalMax","pressaoOleo","tempOleoEntrada","tempOleoSaida"]},
+    {title:"Sistema de Vapor",icon:"ti-flame",
+     items:["vaporEntrada","vaporSelagem","vaporExaustao"]},
+    {title:"V&aacute;cuo &amp; Condensador",icon:"ti-arrow-down-circle",
+     items:["ejetorVacuo","condVacuo","tempCondensado"]}
+  ];
+  el.innerHTML=groups.map(g=>{
+    const rows=g.items.map(key=>{
+      const p=PARAMS.find(x=>x.key===key);
+      const vals=data.map(d=>d[key]).filter(x=>x!==null&&!isNaN(x));
+      const med=avg(vals);
+      const st=statusParam(p,med);
+      const tnd=trend(vals);
+      // bar: normalize within range
+      let pct=0;
+      if(med!==null){
+        const r=p.refs;
+        const lo=Math.min(...Object.values(r).flat().filter(x=>x>-999));
+        const hi=Math.max(...Object.values(r).flat().filter(x=>x<999));
+        pct=Math.round(((med-lo)/(hi-lo))*100);
+        pct=Math.max(0,Math.min(100,pct));
+      }
+      const barCol=st.cls==="bg"?"var(--g)":st.cls==="ba"?"var(--a)":"var(--r)";
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)">
+        <div style="min-width:140px;font-size:10px;color:var(--t2)">${p.nome}</div>
+        <div style="flex:1">
+          <div class="pbar-wrap"><div class="pbar" style="width:${pct}%;background:${barCol}"></div></div>
+        </div>
+        <div style="min-width:70px;text-align:right;font-family:var(--m);font-size:11px;font-weight:700;color:${barCol}">${med===null?"--":med.toFixed(2)} ${p.unidade}</div>
+        <div style="min-width:60px;text-align:right"><span class="bdg ${st.cls}">${st.txt}</span></div>
+        <div style="min-width:80px;text-align:right;font-size:10px" class="${tnd.cls}">${tnd.txt}</div>
+      </div>`;
+    }).join('');
+    return `<div class="card" style="margin-bottom:10px;padding:12px 14px">
+      <div style="font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px"><i class="ti ${g.icon}" style="font-size:11px"></i>${g.title}</div>
+      ${rows}
+    </div>`;
+  }).join('');
+}
+
+// ── SVG LINE CHART ──
+function drawChart(svgId,series,vmin,vmax){
+  const svg=document.getElementById(svgId);
+  if(!svg)return;
+  const W=320,H=100,PAD=10;
+  const colors=["var(--blb)","var(--g)","var(--a)","var(--r)","var(--cy)"];
+  // find actual min/max across all series
+  const allVals=series.flatMap(s=>s.data).filter(v=>v!==null&&!isNaN(v));
+  if(!allVals.length){svg.innerHTML=`<text x="160" y="60" text-anchor="middle" font-size="10" fill="var(--t3)">Sem dados</text>`;return;}
+  const lo=vmin!==undefined?vmin:Math.min(...allVals);
+  const hi=vmax!==undefined?vmax:Math.max(...allVals);
+  const range=hi-lo||1;
+  const n=Math.max(...series.map(s=>s.data.length));
+  if(n<2){svg.innerHTML=`<text x="160" y="60" text-anchor="middle" font-size="10" fill="var(--t3)">Insira ao menos 2 leituras</text>`;return;}
+  const xStep=(W-PAD*2)/(n-1);
+  function px(i){return PAD+i*xStep;}
+  function py(v){return H-PAD-((v-lo)/range)*(H-PAD*2);}
+  // grid lines
+  let html=`<line x1="${PAD}" y1="${PAD}" x2="${PAD}" y2="${H-PAD}" stroke="var(--b)" stroke-width=".5"/>
+  <line x1="${PAD}" y1="${H-PAD}" x2="${W-PAD}" y2="${H-PAD}" stroke="var(--b)" stroke-width=".5"/>`;
+  // axis labels
+  html+=`<text x="${PAD-2}" y="${PAD+4}" text-anchor="end" font-size="8" fill="var(--t3)">${hi.toFixed(1)}</text>
+  <text x="${PAD-2}" y="${H-PAD+4}" text-anchor="end" font-size="8" fill="var(--t3)">${lo.toFixed(1)}</text>`;
+  // L labels
+  for(let i=0;i<n;i++){
+    html+=`<text x="${px(i)}" y="${H+4}" text-anchor="middle" font-size="8" fill="var(--t3)">L${i+1}</text>`;
+  }
+  // series
+  series.forEach((s,si)=>{
+    const col=colors[si%colors.length];
+    const valid=s.data.map((v,i)=>({v,i})).filter(p=>p.v!==null&&!isNaN(p.v));
+    if(valid.length<2)return;
+    // path
+    let d="M"+valid.map(p=>`${px(p.i).toFixed(1)},${py(p.v).toFixed(1)}`).join(" L");
+    html+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity=".85"/>`;
+    // area fill
+    let area=`M${px(valid[0].i).toFixed(1)},${H-PAD} L`+valid.map(p=>`${px(p.i).toFixed(1)},${py(p.v).toFixed(1)}`).join(" L")+` L${px(valid[valid.length-1].i).toFixed(1)},${H-PAD} Z`;
+    html+=`<path d="${area}" fill="${col}" opacity=".06"/>`;
+    // dots
+    valid.forEach(p=>{
+      html+=`<circle cx="${px(p.i).toFixed(1)}" cy="${py(p.v).toFixed(1)}" r="3" fill="${col}" opacity=".9"/>`;
+      html+=`<text x="${px(p.i).toFixed(1)}" y="${(py(p.v)-6).toFixed(1)}" text-anchor="middle" font-size="8" fill="${col}">${p.v.toFixed(1)}</text>`;
+    });
+    // legend
+    if(s.label){
+      html+=`<circle cx="${PAD+8+si*80}" cy="${H+14}" r="3" fill="${col}"/>
+      <text x="${PAD+14+si*80}" y="${H+18}" font-size="8" fill="var(--t2)">${s.label}</text>`;
+    }
+  });
+  svg.setAttribute("viewBox",`0 0 ${W} ${H+22}`);
+  svg.innerHTML=html;
+}
+
+// ── RENDER CHARTS ──
+function renderCharts(data){
+  if(!data.length){
+    ["ch-mancais","ch-oleo","ch-vapor","ch-vacuo","ch-agua","ch-condensado"].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.innerHTML=`<text x="160" y="60" text-anchor="middle" font-size="10" fill="var(--t3)">Sem dados</text>`;
+    });
+    return;
+  }
+  // Mancais
+  const mancalMax=data.map(d=>{
+    const vals=[d.mancalSuperior1,d.mancalMedio,d.mancalInferior1,d.mancalSuperior2,d.mancalInferior2].filter(v=>v!==null&&!isNaN(v));
+    return vals.length?Math.max(...vals):null;
+  });
+  const mancalMed=data.map(d=>{
+    const vals=[d.mancalSuperior1,d.mancalMedio,d.mancalInferior1,d.mancalSuperior2,d.mancalInferior2].filter(v=>v!==null&&!isNaN(v));
+    return vals.length?avg(vals):null;
+  });
+  drawChart("ch-mancais",[
+    {label:"M&aacute;x.",data:mancalMax},
+    {label:"M&eacute;d.",data:mancalMed}
+  ]);
+  // Óleo
+  drawChart("ch-oleo",[
+    {label:"Press. &oacute;leo",data:data.map(d=>d.pressaoOleo)},
+    {label:"Temp. entrada",data:data.map(d=>d.tempOleoEntrada)},
+    {label:"Temp. sa&iacute;da",data:data.map(d=>d.tempOleoSaida)}
+  ]);
+  // Vapor
+  drawChart("ch-vapor",[
+    {label:"Entrada",data:data.map(d=>d.vaporEntrada)},
+    {label:"Selagem",data:data.map(d=>d.vaporSelagem)},
+    {label:"Exaust&atilde;o",data:data.map(d=>d.vaporExaustao)}
+  ]);
+  // Vácuo
+  drawChart("ch-vacuo",[
+    {label:"Ejetor",data:data.map(d=>d.ejetorVacuo)},
+    {label:"Condensador",data:data.map(d=>d.condVacuo)}
+  ]);
+  // Água mar
+  drawChart("ch-agua",[
+    {label:"A.M. entrada",data:data.map(d=>d.condAmEntrada||d.ejetorAmEntrada)},
+    {label:"A.M. sa&iacute;da",data:data.map(d=>d.condAmSaida||d.ejetorAmSaida)},
+    {label:"&Delta;T",data:data.map(d=>d.deltaTCond)}
+  ]);
+  // Condensado/Casco
+  drawChart("ch-condensado",[
+    {label:"Condensado",data:data.map(d=>d.tempCondensado)},
+    {label:"Casco",data:data.map(d=>d.tempCasco)}
+  ]);
+}
+
+// ── STAT TABLE ──
+function renderStatTable(data){
+  const tbody=document.getElementById("stat-tbody");
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--t3)">Sem dados</td></tr>`;return;}
+  tbody.innerHTML=PARAMS.map(p=>{
+    const vals=data.map(d=>d[p.key]).filter(v=>v!==null&&!isNaN(v));
+    const med=avg(vals),mn=minv(vals),mx=maxv(vals);
+    const variation=vals.length>=2?vals[vals.length-1]-vals[0]:null;
+    const tnd=trend(vals);
+    const st=statusParam(p,med);
+    return `<tr>
+      <td>${p.nome}</td>
+      <td class="val">${med!==null?med.toFixed(2)+" "+p.unidade:"--"}</td>
+      <td class="val" style="color:var(--t2)">${mn!==null?mn.toFixed(2):"--"}</td>
+      <td class="val" style="color:var(--t2)">${mx!==null?mx.toFixed(2):"--"}</td>
+      <td class="val ${variation!==null&&variation>0?"tend-up":variation!==null&&variation<-0.05?"tend-down":"tend-stable"}">${variation!==null?variation.toFixed(2):"--"}</td>
+      <td class="${tnd.cls}">${tnd.txt}</td>
+      <td><span class="bdg ${st.cls}">${st.txt}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── ANALYSIS ──
+function renderAnalysis(data){
+  const el=document.getElementById("analysis-content");
+  if(data.length<2){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="ti ti-brain"></i></div><div class="empty-text">Registre pelo menos 2 leituras para gerar a an&aacute;lise autom&aacute;tica.</div></div>`;
+    return;
+  }
+  const kpis=calcKPIs(data);
+  const n=data.length;
+  // Diagnósticos por sistema
+  const diags=[];
+  // Vapor
+  const vaporVals=data.map(d=>d.vaporEntrada).filter(v=>v!==null);
+  const vaporTend=trend(vaporVals);
+  const vaporAvg=avg(vaporVals);
+  if(vaporAvg!==null){
+    const ok=vaporAvg>=13&&vaporAvg<=16;
+    const effVapor=kpis.vapor;
+    diags.push({
+      sys:"Sistema de Vapor",icon:"ti-flame",
+      col:ok?"var(--g)":"var(--a)",
+      text:`Press&atilde;o m&eacute;dia de entrada: <strong>${vaporAvg.toFixed(2)} bar</strong>. Tend&ecirc;ncia: <strong class="${vaporTend.cls}">${vaporTend.txt}</strong>.
+        ${!ok?"Press&atilde;o fora da faixa ideal (13&ndash;16 bar). Verificar caldeira BE1 e demanda dos COPTs.":"Sistema dentro da refer&ecirc;ncia. Acompanhar estabilidade durante aumento de carga."}`,
+      action:effVapor!==null&&effVapor<80?"Recomendar: verificar s&atilde;o os par&acirc;metros de combust&atilde;o na caldeira e a press&atilde;o de vapor de selagem.":null
+    });
+  }
+  // Vácuo
+  const vacuoEj=data.map(d=>d.ejetorVacuo).filter(v=>v!==null);
+  const vacuoCo=data.map(d=>d.condVacuo).filter(v=>v!==null);
+  const vacuoEjAvg=avg(vacuoEj),vacuoCoAvg=avg(vacuoCo);
+  if(vacuoEjAvg!==null||vacuoCoAvg!==null){
+    const ejOk=vacuoEjAvg!==null&&vacuoEjAvg<=-0.28;
+    const coOk=vacuoCoAvg!==null&&vacuoCoAvg<=-0.28;
+    const ejTend=trend(vacuoEj);
+    diags.push({
+      sys:"Controle de V&aacute;cuo",icon:"ti-arrow-down-circle",
+      col:ejOk&&coOk?"var(--g)":!ejOk||!coOk?"var(--r)":"var(--a)",
+      text:`Ejetor: <strong>${vacuoEjAvg!==null?vacuoEjAvg.toFixed(2):"--"}</strong> (ref: &lt;&minus;0,30) | Condensador: <strong>${vacuoCoAvg!==null?vacuoCoAvg.toFixed(2):"--"}</strong>. Tend&ecirc;ncia ejetor: <strong class="${ejTend.cls}">${ejTend.txt}</strong>.
+        ${!ejOk||!coOk?"V&aacute;cuo abaixo do esperado. Perda cont&iacute;nua pode indicar redu&ccedil;&atilde;o de efici&ecirc;ncia de condensa&ccedil;&atilde;o.":"V&aacute;cuo dentro da faixa operacional."}`,
+      action:!ejOk?"Verificar bomba de alimenta&ccedil;&atilde;o do condensador, ejetor e condi&ccedil;&atilde;o da &aacute;gua do mar.":null
+    });
+  }
+  // Mancais
+  const mancalMaxArr=data.map(d=>d.mancalMax).filter(v=>v!==null);
+  const mancalAvg=avg(mancalMaxArr);
+  if(mancalAvg!==null){
+    const tnd=trend(mancalMaxArr);
+    const ok=mancalAvg<70,warn=mancalAvg>=70&&mancalAvg<75;
+    diags.push({
+      sys:"Mancais &amp; &Oacute;leo",icon:"ti-engine",
+      col:ok?"var(--g)":warn?"var(--a)":"var(--r)",
+      text:`Temp. m&aacute;x. m&eacute;dia dos mancais: <strong>${mancalAvg.toFixed(1)}&deg;C</strong>. Tend&ecirc;ncia: <strong class="${tnd.cls}">${tnd.txt}</strong>.
+        ${!ok?"Temperatura elevada. Risco de degrada&ccedil;&atilde;o da condi&ccedil;&atilde;o operacional. Verificar sistema de lubrifica&ccedil;&atilde;o.":"Temperatura dos mancais dentro da faixa normal."}`,
+      action:!ok?"Verificar press&atilde;o e temperatura do &oacute;leo lubrificante. Inspecionar rolamentos se houver tend&ecirc;ncia de eleva&ccedil;&atilde;o.":null
+    });
+  }
+  // Condensado
+  const condArr=data.map(d=>d.tempCondensado).filter(v=>v!==null);
+  const condAvg=avg(condArr);
+  if(condAvg!==null){
+    const tnd=trend(condArr);
+    const ok=condAvg<85;
+    diags.push({
+      sys:"Condensado &amp; Troca T&eacute;rmica",icon:"ti-droplets",
+      col:ok?"var(--g)":"var(--a)",
+      text:`Temp. m&eacute;dia do condensado: <strong>${condAvg.toFixed(1)}&deg;C</strong>. Tend&ecirc;ncia: <strong class="${tnd.cls}">${tnd.txt}</strong>.
+        ${!ok?"Temperatura do condensado elevada. Correlacionar com a condi&ccedil;&atilde;o de troca t&eacute;rmica da &aacute;gua do mar.":"Temperatura do condensado dentro da faixa aceit&aacute;vel."}`,
+      action:!ok?"Verificar fluxo de &aacute;gua do mar e efici&ecirc;ncia do casco condensador.":null
+    });
+  }
+  el.innerHTML=`
+    <!-- KPIs resumo -->
+    <div class="g4" style="margin-bottom:16px">
+      ${["Efici&ecirc;ncia Geral","Estab. Vapor","Controle V&aacute;cuo","Controle T&eacute;rmico"].map((lbl,i)=>{
+        const vals=[kpis.geral,kpis.vapor,kpis.vacuo,kpis.termico];
+        const v=vals[i];
+        const col=kpiColor(v);
+        return `<div class="kpi-card ${kpiCls(v)}" style="text-align:center;padding:16px 12px">
+          <div class="kpi-lbl">${lbl}</div>
+          <div class="kpi-val" style="color:${col};font-size:28px;margin:6px 0">${v!==null?Math.round(v)+"%":"--"}</div>
+          <div style="font-size:10px;color:${col}">${kpiStatus(v)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <!-- Conclusão geral -->
+    <div class="analysis-card" style="margin-bottom:12px">
+      <div class="analysis-hdr">
+        <div class="analysis-icon" style="background:rgba(30,127,216,.1);color:var(--blb)"><i class="ti ti-report-analytics"></i></div>
+        <div>
+          <div class="analysis-title">Conclus&atilde;o autom&aacute;tica &mdash; ${n} leitura${n!==1?"s":""} analisada${n!==1?"s":""}</div>
+          <div class="analysis-sub">Efici&ecirc;ncia geral: <strong style="color:${kpiColor(kpis.geral)}">${kpis.geral!==null?Math.round(kpis.geral)+"%":"sem dados suficientes"}</strong></div>
+        </div>
+      </div>
+      <div class="analysis-body">
+        <div style="font-size:11px;color:var(--t2);line-height:1.7;margin-bottom:12px">
+          Foram analisadas <strong style="color:var(--t)">${n}</strong> leituras no banco local. 
+          A efici&ecirc;ncia geral calculada &eacute; de <strong style="color:${kpiColor(kpis.geral)}">${kpis.geral!==null?Math.round(kpis.geral)+"%":"--"}</strong>,
+          considerando estabilidade de vapor (${kpis.vapor!==null?Math.round(kpis.vapor)+"%":"--"}), controle de v&aacute;cuo (${kpis.vacuo!==null?Math.round(kpis.vacuo)+"%":"--"}) e controle t&eacute;rmico (${kpis.termico!==null?Math.round(kpis.termico)+"%":"--"}).
+        </div>
+        <div class="divider" style="margin:10px 0"></div>
+        ${diags.map(d=>`
+          <div class="diag-row">
+            <div class="diag-dot" style="background:${d.col}"></div>
+            <div style="flex:1">
+              <div class="diag-sys"><i class="ti ${d.icon}" style="font-size:10px;margin-right:4px"></i>${d.sys}</div>
+              <div class="diag-text">${d.text}</div>
+              ${d.action?`<div class="diag-action"><i class="ti ti-arrow-right" style="font-size:10px"></i> ${d.action}</div>`:""}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <!-- Recomendação operacional -->
+    ${kpis.geral!==null&&kpis.geral<80?`<div class="ab w"><div class="ab-t"><i class="ti ti-alert-triangle"></i> Efici&ecirc;ncia abaixo de 80% &mdash; a&ccedil;&atilde;o recomendada</div><div class="ab-b">Identificar o sistema com maior variabilidade e priorizar correti&ccedil;&atilde;o antes da pr&oacute;xima opera&ccedil;&atilde;o de offloading. Registrar ocorr&ecirc;ncias e a&ccedil;&otilde;es tomadas na pr&oacute;xima leitura.</div></div>`:""}
+    ${kpis.geral!==null&&kpis.geral>=85?`<div class="ab s"><div class="ab-t"><i class="ti ti-check"></i> Efici&ecirc;ncia satisfat&oacute;ria</div><div class="ab-b">Sistemas operando dentro dos par&acirc;metros. Manter freq&uuml;&ecirc;ncia de leituras e acompanhar tend&ecirc;ncias para preven&ccedil;&atilde;o.</div></div>`:""}
+  `;
+}
+
+// ── HISTORY ──
+function renderHistory(){
+  const data=banco();
+  const el=document.getElementById("history-list");
+  if(!data.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="ti ti-database-off"></i></div><div class="empty-text">Nenhuma leitura salva ainda.</div></div>`;
+    return;
+  }
+  el.innerHTML=data.map((d,i)=>{
+    const expanded=false;
+    return `<div class="reading-card" id="rc-${d.id}" onclick="toggleReading('${d.id}')">
+      <div class="rc-hdr">
+        <div class="rc-num">L${d.numeroLeitura||i+1}</div>
+        <div style="flex:1">
+          <div class="rc-title">${d.tipoOperacao||"Leitura"} &mdash; ${d.copt||"--"}</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px">${d.dataOperacao||"--"} &middot; ${d.horario||"--"} &middot; ${d.operador||"--"}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="bdg bgr">${d.condicao||"Normal"}</span>
+          <button class="btn" style="min-height:32px;padding:4px 8px;font-size:10px" onclick="event.stopPropagation();editarLeitura('${d.id}')"><i class="ti ti-edit"></i></button>
+          <button class="btn r" style="min-height:32px;padding:4px 8px;font-size:10px" onclick="event.stopPropagation();deletarLeitura('${d.id}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      <div class="rc-body" id="rcb-${d.id}">
+        <div class="rc-grid">
+          ${[
+            ["Vapor entrada",d.vaporEntrada,"bar"],["V&aacute;cuo ejetor",d.ejetorVacuo,""],
+            ["V&aacute;cuo cond.",d.condVacuo,""],["Temp. mancal mx",d.mancalMax,"&deg;C"],
+            ["Press. &oacute;leo",d.pressaoOleo,"bar"],["Temp. condensado",d.tempCondensado,"&deg;C"]
+          ].map(([lbl,val,un])=>`<div class="rc-param"><div class="rc-param-lbl">${lbl}</div><div class="rc-param-val">${val!==null&&val!==undefined?Number(val).toFixed(2)+" "+un:"--"}</div></div>`).join('')}
+        </div>
+        ${d.ocorrencia?`<div style="margin-top:8px;padding:8px 10px;background:rgba(240,64,80,.06);border:1px solid rgba(240,64,80,.15);border-radius:var(--rad);font-size:10px;color:var(--t2)"><strong style="color:var(--r)">Ocorr&ecirc;ncia:</strong> ${d.ocorrencia}</div>`:""}
+        ${d.acao?`<div style="margin-top:6px;padding:8px 10px;background:rgba(30,127,216,.06);border:1px solid rgba(30,127,216,.15);border-radius:var(--rad);font-size:10px;color:var(--t2)"><strong style="color:var(--blb)">A&ccedil;&atilde;o:</strong> ${d.acao}</div>`:""}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleReading(id){
+  const card=document.getElementById("rc-"+id);
+  const body=document.getElementById("rcb-"+id);
+  card.classList.toggle("expanded");
+  if(body)body.style.display=card.classList.contains("expanded")?"block":"none";
+}
+
+// ── DASHBOARD ──
+function renderDashboard(){
+  const data=banco();
+  const kpis=calcKPIs(data);
+  // Gauges
+  const gaugeEl=document.getElementById("kpi-gauges");
+  gaugeEl.innerHTML=[
+    {v:kpis.geral,lbl:"Efici&ecirc;ncia Geral",sub:"Estabilidade &middot; v&aacute;cuo &middot; t&eacute;rmico"},
+    {v:kpis.vapor,lbl:"Estab. Vapor",sub:"Entrada / selagem / exaust&atilde;o"},
+    {v:kpis.vacuo,lbl:"Controle V&aacute;cuo",sub:"Ejetor / condensador"},
+    {v:kpis.termico,lbl:"Controle T&eacute;rmico",sub:"Mancais / condensado"}
+  ].map(k=>{
+    const col=kpiColor(k.v);
+    const pct=k.v!==null?Math.round(k.v):null;
+    return gaugeRingSVG(pct,col,k.lbl,k.sub);
+  }).join('');
+  // Param bars
+  renderParamBars(data);
+  // Charts
+  renderCharts(data);
+  // Stat table
+  renderStatTable(data);
+  // Count badge
+  const cnt=document.getElementById("tb-count");
+  if(cnt)cnt.textContent=data.length+" leitura"+(data.length!==1?"s":"");
+  const dc=document.getElementById("dash-readings-count");
+  if(dc)dc.textContent=data.length+" registro"+(data.length!==1?"s":"");
+}
+
+// ── SAVE / EDIT / DELETE ──
+function montarRegistro(){
+  const mancais=[num("mancalSuperior1"),num("mancalMedio"),num("mancalInferior1"),num("mancalSuperior2"),num("mancalInferior2")].filter(v=>v!==null&&!isNaN(v));
+  const deltaTCond=(num("condAmSaida")-num("condAmEntrada"))||null;
+  return{
+    id:editingId||(Date.now().toString()),
+    tipoOperacao:txt("tipoOperacao"),
+    dataOperacao:txt("dataOperacao"),
+    copt:txt("copt"),rpm:num("rpm"),
+    numeroLeitura:txt("numeroLeitura"),
+    horario:txt("horario"),
+    operador:txt("operador"),
+    condicao:txt("condicao"),
+    mancalSuperior1:num("mancalSuperior1"),mancalMedio:num("mancalMedio"),
+    mancalInferior1:num("mancalInferior1"),mancalSuperior2:num("mancalSuperior2"),
+    mancalInferior2:num("mancalInferior2"),
+    mancalMax:mancais.length?Math.max(...mancais):null,
+    pressaoOleo:num("pressaoOleo"),
+    tempOleoEntrada:num("tempOleoEntrada"),tempOleoSaida:num("tempOleoSaida"),
+    vaporEntrada:num("vaporEntrada"),vaporSelagem:num("vaporSelagem"),vaporExaustao:num("vaporExaustao"),
+    ejetorPressaoVapor:num("ejetorPressaoVapor"),ejetorVacuo:num("ejetorVacuo"),
+    ejetorAmEntrada:num("ejetorAmEntrada"),ejetorAmSaida:num("ejetorAmSaida"),
+    condVacuo:num("condVacuo"),
+    condPressAmEntrada:num("condPressAmEntrada"),condPressAmOverboard:num("condPressAmOverboard"),
+    condAmEntrada:num("condAmEntrada"),condAmSaida:num("condAmSaida"),
+    tempCasco:num("tempCasco"),tempCondensado:num("tempCondensado"),
+    deltaTCond:deltaTCond,
+    ocorrencia:txt("ocorrencia"),acao:txt("acao"),pendencia:txt("pendencia")
+  };
+}
+
+function salvarLeitura(){
+  const reg=montarRegistro();
+  const dados=banco();
+  if(editingId){
+    const idx=dados.findIndex(d=>d.id===editingId);
+    if(idx>=0)dados[idx]=reg;
+  }else{
+    dados.push(reg);
+    dados.sort((a,b)=>(a.numeroLeitura||0)-(b.numeroLeitura||0));
+  }
+  salvarBanco(dados);
+  cancelarEdicao();
+  refreshAll();
+  showToast(editingId?"Leitura atualizada":"Leitura salva no banco local");
+  editingId=null;
+}
+
+function editarLeitura(id){
+  const d=banco().find(x=>x.id===id);
+  if(!d)return;
+  editingId=id;
+  ["tipoOperacao","dataOperacao","copt","rpm","numeroLeitura","horario","operador","condicao",
+   "mancalSuperior1","mancalMedio","mancalInferior1","mancalSuperior2","mancalInferior2",
+   "pressaoOleo","tempOleoEntrada","tempOleoSaida","vaporEntrada","vaporSelagem","vaporExaustao",
+   "ejetorPressaoVapor","ejetorVacuo","ejetorAmEntrada","ejetorAmSaida",
+   "condVacuo","condPressAmEntrada","condPressAmOverboard","condAmEntrada","condAmSaida",
+   "tempCasco","tempCondensado","ocorrencia","acao","pendencia"
+  ].forEach(k=>{const el=document.getElementById(k);if(el&&d[k]!==null&&d[k]!==undefined)el.value=d[k];});
+  document.getElementById("edit-alert").style.display="block";
+  document.getElementById("btn-cancelar").style.display="";
+  document.getElementById("btn-salvar").innerHTML='<i class="ti ti-device-floppy"></i>Atualizar leitura';
+  showPanel("input",document.getElementById("np-input"));
+}
+
+function deletarLeitura(id){
+  if(!confirm("Excluir esta leitura?"))return;
+  salvarBanco(banco().filter(d=>d.id!==id));
+  refreshAll();
+  showToast("Leitura exclu&iacute;da");
+}
+
+function cancelarEdicao(){
+  editingId=null;
+  document.getElementById("edit-alert").style.display="none";
+  document.getElementById("btn-cancelar").style.display="none";
+  document.getElementById("btn-salvar").innerHTML='<i class="ti ti-device-floppy"></i>Salvar no banco local';
+  limparForm();
+}
+
+function limparForm(){
+  ["tipoOperacao","dataOperacao","copt","rpm","numeroLeitura","horario","operador","condicao",
+   "mancalSuperior1","mancalMedio","mancalInferior1","mancalSuperior2","mancalInferior2",
+   "pressaoOleo","tempOleoEntrada","tempOleoSaida","vaporEntrada","vaporSelagem","vaporExaustao",
+   "ejetorPressaoVapor","ejetorVacuo","ejetorAmEntrada","ejetorAmSaida",
+   "condVacuo","condPressAmEntrada","condPressAmOverboard","condAmEntrada","condAmSaida",
+   "tempCasco","tempCondensado","ocorrencia","acao","pendencia"
+  ].forEach(k=>{const el=document.getElementById(k);if(el)el.value="";});
+}
+
+function apagarBanco(){
+  if(!confirm("Apagar todo o banco local de leituras? Esta a&ccedil;&atilde;o n&atilde;o pode ser desfeita."))return;
+  localStorage.removeItem(SK);
+  refreshAll();
+  showToast("Banco local apagado");
+}
+
+function exportarJSON(){
+  const blob=new Blob([JSON.stringify(banco(),null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="eficiencia_caldeira_copt_"+new Date().toISOString().slice(0,10)+".json";
+  a.click();URL.revokeObjectURL(url);
+  showToast("JSON exportado");
+}
+
+// ── REFRESH ALL ──
+function refreshAll(){
+  renderDashboard();
+  renderAnalysis(banco());
+  renderHistory();
+}
+
+// ── NAV ──
+function showPanel(id,el){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+  document.querySelectorAll(".npill").forEach(p=>p.classList.remove("on"));
+  document.getElementById("panel-"+id).classList.add("on");
+  if(el)el.classList.add("on");
+  if(id==="dash")renderDashboard();
+  if(id==="analysis")renderAnalysis(banco());
+  if(id==="history")renderHistory();
+}
+
+// ── TOAST ──
+function showToast(m){const t=document.getElementById("tst");t.innerHTML=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);}
+
+// ── INIT ──
+document.getElementById("tb-date").textContent=new Date().toLocaleDateString("pt-BR");
+// Pre-load with PDF data for demo
+(function preloadDemo(){
+  if(banco().length)return;
+  const demo=[
+    {id:"L1",tipoOperacao:"Offloading",dataOperacao:"2026-09-30",copt:"COPT 1",rpm:950,numeroLeitura:1,horario:"08:00",operador:"Rafael Monteiro",condicao:"Normal",
+     mancalSuperior1:48.9,mancalMedio:49.2,mancalInferior1:48.8,mancalSuperior2:49.0,mancalInferior2:48.7,mancalMax:49.2,
+     pressaoOleo:1.40,tempOleoEntrada:50.0,tempOleoSaida:47.8,vaporEntrada:15.3,vaporSelagem:0.50,vaporExaustao:0.40,
+     ejetorVacuo:-0.30,condVacuo:-0.30,condAmEntrada:28.5,condAmSaida:45.1,deltaTCond:16.6,tempCondensado:76.3,tempCasco:82.0,
+     ocorrencia:"",acao:"",pendencia:""},
+    {id:"L2",tipoOperacao:"Offloading",dataOperacao:"2026-09-30",copt:"COPT 1",rpm:960,numeroLeitura:2,horario:"09:30",operador:"Rafael Monteiro",condicao:"Normal",
+     mancalSuperior1:50.1,mancalMedio:50.3,mancalInferior1:49.8,mancalSuperior2:50.0,mancalInferior2:49.7,mancalMax:50.3,
+     pressaoOleo:1.25,tempOleoEntrada:47.0,tempOleoSaida:50.1,vaporEntrada:14.8,vaporSelagem:0.47,vaporExaustao:0.36,
+     ejetorVacuo:-0.25,condVacuo:-0.25,condAmEntrada:29.0,condAmSaida:47.8,deltaTCond:18.8,tempCondensado:83.5,tempCasco:88.2,
+     ocorrencia:"",acao:"",pendencia:""},
+    {id:"L3",tipoOperacao:"Offloading",dataOperacao:"2026-09-30",copt:"COPT 1",rpm:960,numeroLeitura:3,horario:"11:00",operador:"Rafael Monteiro",condicao:"Em observa\u00e7\u00e3o",
+     mancalSuperior1:51.0,mancalMedio:51.2,mancalInferior1:50.8,mancalSuperior2:51.1,mancalInferior2:50.9,mancalMax:51.2,
+     pressaoOleo:1.18,tempOleoEntrada:45.0,tempOleoSaida:51.5,vaporEntrada:14.5,vaporSelagem:0.45,vaporExaustao:0.33,
+     ejetorVacuo:-0.20,condVacuo:-0.19,condAmEntrada:29.5,condAmSaida:48.2,deltaTCond:18.7,tempCondensado:87.2,tempCasco:93.0,
+     ocorrencia:"",acao:"",pendencia:"V&aacute;cuo com tend&ecirc;ncia de redu&ccedil;&atilde;o"},
+    {id:"L4",tipoOperacao:"Offloading",dataOperacao:"2026-09-30",copt:"COPT 1",rpm:955,numeroLeitura:4,horario:"12:30",operador:"Rafael Monteiro",condicao:"Em observa\u00e7\u00e3o",
+     mancalSuperior1:51.3,mancalMedio:51.3,mancalInferior1:51.2,mancalSuperior2:51.3,mancalInferior2:51.1,mancalMax:51.3,
+     pressaoOleo:1.15,tempOleoEntrada:44.0,tempOleoSaida:52.0,vaporEntrada:14.2,vaporSelagem:0.40,vaporExaustao:0.30,
+     ejetorVacuo:-0.15,condVacuo:-0.15,condAmEntrada:32.1,condAmSaida:43.9,deltaTCond:11.8,tempCondensado:90.3,tempCasco:99.1,
+     ocorrencia:"V\u00e1cuo reduzindo progressivamente. Condensado com temperatura elevada.",acao:"Monitorar e comunicar Eng. de M\u00e1quinas.",pendencia:"Verificar bomba de alimenta\u00e7\u00e3o condensador"}
+  ];
+  salvarBanco(demo);
+})();
+refreshAll();
+</script>
+</body>
+</html>
